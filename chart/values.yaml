@@ -28,10 +28,10 @@ gid: 50000
 airflowHome: "/opt/airflow"
 
 # Default airflow repository -- overrides all the specific images below
-defaultAirflowRepository: apache/airflow
+defaultAirflowRepository: timsu27/custom-airflow:2.1.0-python3.8
 
 # Default airflow tag to deploy
-defaultAirflowTag: 2.0.0
+defaultAirflowTag: 2.1.0
 
 
 # Select certain nodes for airflow pods.
@@ -315,7 +315,7 @@ workers:
 
   persistence:
     # Enable persistent volumes
-    enabled: true
+    enabled: false
     # Volume size for worker StatefulSet
     size: 100Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
@@ -717,22 +717,24 @@ dags:
     ## the name of an existing PVC to use
     existingClaim: ~
   gitSync:
-    enabled: false
+    enabled: true
     # git repo clone url
     # ssh examples ssh://git@github.com/apache/airflow.git
     # git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
-    repo: https://github.com/apache/airflow.git
-    branch: v1-10-stable
+    repo: https://github.com/TimJLS/AirflowDAGs.git
+    branch: master
     rev: HEAD
     root: "/git"
     dest: "repo"
-    depth: 1
+#    root: ""
+    depth: 2
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
-    subPath: "tests/dags"
+#    subPath: "tests/dags"
+    subPath: ""
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---
@@ -745,7 +747,7 @@ dags:
     #     GIT_SYNC_PASSWORD: <base64_encoded_git_password>
     # and specify the name of the secret below
     #
-    # credentialsSecret: git-credentials
+    credentialsSecret: git-credentials
     #
     #
     # If you are using an ssh clone url, you can load
