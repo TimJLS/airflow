@@ -28,10 +28,10 @@ gid: 50000
 airflowHome: "/opt/airflow"
 
 # Default airflow repository -- overrides all the specific images below
-defaultAirflowRepository: timsu27/custom-airflow:2.1.0-python3.8
+defaultAirflowRepository: timsu27/custom-airflow
 
 # Default airflow tag to deploy
-defaultAirflowTag: 2.1.0
+defaultAirflowTag: 2.1.0-python3.8
 
 
 # Select certain nodes for airflow pods.
@@ -723,12 +723,13 @@ dags:
     # git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
     repo: https://github.com/TimJLS/AirflowDAGs.git
+    #repo: https://git.owdev.net/tim.su/airflowdags.git
     branch: master
     rev: HEAD
     root: "/git"
     dest: "repo"
 #    root: ""
-    depth: 2
+    depth: 1
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
     # subpath within the repo where dags are located
@@ -747,7 +748,7 @@ dags:
     #     GIT_SYNC_PASSWORD: <base64_encoded_git_password>
     # and specify the name of the secret below
     #
-    credentialsSecret: git-credentials
+    #credentialsSecret: git-credentials
     #
     #
     # If you are using an ssh clone url, you can load
