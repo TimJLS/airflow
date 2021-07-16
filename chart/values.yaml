@@ -723,13 +723,12 @@ dags:
     # git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
     repo: https://github.com/TimJLS/AirflowDAGs.git
-    #repo: https://git.owdev.net/tim.su/airflowdags.git
     branch: master
     rev: HEAD
     root: "/git"
     dest: "repo"
 #    root: ""
-    depth: 1
+    depth: 2
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
     # subpath within the repo where dags are located
