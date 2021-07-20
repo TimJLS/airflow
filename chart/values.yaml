@@ -1226,7 +1226,9 @@ dags:
     containerName: git-sync
     uid: 65533
     extraVolumeMounts: []
-    env: []
+    env: 
+      - name: GIT_SYNC_GIT_CONFIG
+        value: http.proxy:10.40.40.245:3128,https.proxy:10.40.40.245:3128
     resources: {}
     #  limits:
     #   cpu: 100m
