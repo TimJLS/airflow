@@ -180,6 +180,11 @@ secret:
     secretName: airflow-mssql-connection-uri
     secretKey: connection
 
+  - envName: AIRFLOW_CONN_WIN_SERVICE_TOGGLE
+    secretName: airflow-http-connection-uri
+    secretKey: connection
+
+
 # Extra secrets that will be managed by the chart
 # (You can use them with extraEnv or extraEnvFrom or some of the extraVolumes values).
 # The format is "key/value" where
