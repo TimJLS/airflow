@@ -175,10 +175,10 @@ env: []
 #   value: ""
 
 # Secrets for all airflow containers
-secret: []
-# - envName: ""
-#   secretName: ""
-#   secretKey: ""
+secret:
+  - envName: AIRFLOW_CONN_MSSQL_BI
+    secretName: airflow-mssql-connection-uri
+    secretKey: connection
 
 # Extra secrets that will be managed by the chart
 # (You can use them with extraEnv or extraEnvFrom or some of the extraVolumes values).
@@ -1226,7 +1226,7 @@ dags:
     containerName: git-sync
     uid: 65533
     extraVolumeMounts: []
-    env: 
+    env:
       - name: GIT_SYNC_GIT_CONFIG
         value: http.proxy:10.40.40.245:3128,https.proxy:10.40.40.245:3128
     resources: {}
