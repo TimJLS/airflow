@@ -471,7 +471,7 @@ scheduler:
     periodSeconds: 30
   # Airflow 2.0 allows users to run multiple schedulers,
   # However this feature is only recommended for MySQL 8+ and Postgres
-  replicas: 1
+  replicas: 5
 
   # Command to use when running the Airflow scheduler (templated).
   command: ~
@@ -612,7 +612,7 @@ webserver:
     periodSeconds: 5
 
   # Number of webservers
-  replicas: 1
+  replicas: 3
 
   # Command to use when running the Airflow webserver (templated).
   command: ~
@@ -1246,7 +1246,7 @@ dags:
 logs:
   persistence:
     # Enable persistent volume for storing logs
-    enabled: false
+    enabled: true
     # Volume size for logs
     size: 100Gi
     # If using a custom storageClass, pass name here
