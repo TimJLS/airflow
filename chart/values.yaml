@@ -1074,6 +1074,7 @@ config:
     # store_dag_code: true
 
     # # You can also update the following default configurations based on your needs
+    default_timezone: 'Asia/Taipei'
     # min_serialized_dag_update_interval: 30
     # min_serialized_dag_fetch_interval: 10
     # max_num_rendered_ti_fields_per_task: 30
