@@ -33,8 +33,8 @@ keywords:
   - workflow
   - scheduler
 dependencies:
-  - name: postgresql
-    version: 10.x.x
+  - name: postgresql-ha
+    version: 7.8.3
     repository: "https://charts.bitnami.com/bitnami"
     condition: postgresql.enabled
 maintainers:
