@@ -37,7 +37,7 @@ airflowHome: /opt/airflow
 defaultAirflowRepository: timsu27/airflow
 
 # Default airflow tag to deploy
-defaultAirflowTag: "2.1.0-python3.8"
+defaultAirflowTag: "2.1.0java8-python3.8"
 
 # Airflow version (Used to make some decisions based on Airflow Version being deployed)
 airflowVersion: "2.1.0"
@@ -332,8 +332,6 @@ workers:
   command: ~
   # Args to use when running Airflow workers (templated).
   args:
-    - "bash"
-    - "-c"
     # The format below is necessary to get `helm lint` happy
     - |-
       exec \
@@ -476,7 +474,7 @@ scheduler:
   # Command to use when running the Airflow scheduler (templated).
   command: ~
   # Args to use when running the Airflow scheduler (templated).
-  args: ["bash", "-c", "exec airflow scheduler"]
+  args: ["airflow scheduler"]
 
   # Update Strategy when scheduler is deployed as a StatefulSet
   # (when using LocalExecutor and workers.persistence)
@@ -617,7 +615,7 @@ webserver:
   # Command to use when running the Airflow webserver (templated).
   command: ~
   # Args to use when running the Airflow webserver (templated).
-  args: ["bash", "-c", "exec airflow webserver"]
+  args: ["airflow webserver"]
 
   # Create ServiceAccount
   serviceAccount:
@@ -1235,9 +1233,9 @@ dags:
     containerName: git-sync
     uid: 65533
     extraVolumeMounts: []
-    env:
-      - name: GIT_SYNC_GIT_CONFIG
-        value: http.proxy:10.40.40.245:3128,https.proxy:10.40.40.245:3128
+    env: []
+      # - name: GIT_SYNC_GIT_CONFIG
+      #   value: http.proxy:10.40.40.245:3128,https.proxy:10.40.40.245:3128
     resources: {}
     #  limits:
     #   cpu: 100m

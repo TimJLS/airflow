@@ -515,6 +515,9 @@ Create the name of the cleanup service account to use
 
 {{ define "wait-for-migrations-command" }}
   {{/* From Airflow 2.0.0 this can become [airflow, db, check-migrations] */}}
+  - bash
+  - -c
+  - exec
   - python
   - -c
   - |
