@@ -34,13 +34,13 @@ gid: 0
 airflowHome: /opt/airflow
 
 # Default airflow repository -- overrides all the specific images below
-defaultAirflowRepository: apache/airflow
+defaultAirflowRepository: timsu27/airflow
 
 # Default airflow tag to deploy
-defaultAirflowTag: "2.1.3"
+defaultAirflowTag: "2.1.0.hive-python3.8"
 
 # Airflow version (Used to make some decisions based on Airflow Version being deployed)
-airflowVersion: "2.1.3"
+airflowVersion: "2.1.0"
 
 # Images
 images:
@@ -1257,21 +1257,21 @@ dags:
     ## the name of an existing PVC to use
     existingClaim:
   gitSync:
-    enabled: false
+    enabled: true
 
     # git repo clone url
     # ssh examples ssh://git@github.com/apache/airflow.git
     # git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
-    repo: https://github.com/apache/airflow.git
-    branch: v2-1-stable
+    repo: https://github.com/TimJLS/AirflowDAGs.git
+    branch: airflow-v2-migration
     rev: HEAD
-    depth: 1
+    depth: 10
     # the number of consecutive failures allowed before aborting
     maxFailures: 0
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
-    subPath: "tests/dags"
+    subPath: ""
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---
