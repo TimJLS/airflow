@@ -161,7 +161,7 @@ rbac:
 
 # Airflow executor
 # Options: LocalExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-executor: "CeleryExecutor"
+executor: "KubernetesExecutor"
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
 # service account will have access to communicate with the api-server and launch pods.
@@ -175,10 +175,15 @@ env: []
 #   value: ""
 
 # Secrets for all airflow containers
-secret: []
-# - envName: ""
-#   secretName: ""
-#   secretKey: ""
+secret:
+  - envName: AIRFLOW_CONN_MSSQL_BI
+    secretName: airflow-mssql-connection-uri
+    secretKey: connection
+
+  - envName: AIRFLOW_CONN_WIN_SERVICE_TOGGLE
+    secretName: airflow-http-connection-uri
+    secretKey: connection
+
 
 # Extra secrets that will be managed by the chart
 # (You can use them with extraEnv or extraEnvFrom or some of the extraVolumes values).
@@ -237,7 +242,7 @@ data:
   # If secret names are provided, use those secrets
   metadataSecretName: ~
   resultBackendSecretName: ~
-  brokerUrlSecretName: ~
+  # brokerUrlSecretName: ~
 
   # Otherwise pass connection values in
   metadataConnection:
@@ -249,18 +254,18 @@ data:
     db: postgres
     sslmode: disable
   # resultBackendConnection defaults to the same database as metadataConnection
-  resultBackendConnection: ~
+  # resultBackendConnection: ~
   # or, you can use a different database
-  # resultBackendConnection:
-  #   user: postgres
-  #   pass: postgres
-  #   protocol: postgresql
-  #   host: ~
-  #   port: 5432
-  #   db: postgres
-  #   sslmode: disable
+  resultBackendConnection:
+    user: postgres
+    pass: postgres
+    protocol: postgresql
+    host: ~
+    port: 5432
+    db: postgres
+    sslmode: disable
   # Note: brokerUrl can only be set during install, not upgrade
-  brokerUrl: ~
+  # brokerUrl: ~
 
 # Fernet key settings
 # Note: fernetKey can only be set during install, not upgrade
@@ -360,7 +365,7 @@ workers:
   # Allow KEDA autoscaling.
   # Persistence.enabled must be set to false to use KEDA.
   keda:
-    enabled: false
+    enabled: true
     namespaceLabels: {}
 
     # How often KEDA polls the airflow DB to report new scale requests to the HPA
@@ -1165,6 +1170,17 @@ config:
     # For Airflow 1.10, backward compatibility; moved to [logging] in 2.0
     colored_console_log: 'False'
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
+
+    # # DAG Serialization
+    # store_dag_code: true
+
+    # # You can also update the following default configurations based on your needs
+    default_timezone: 'Asia/Taipei'
+    schedule_after_task_execution: 'False'
+    # min_serialized_dag_update_interval: 30
+    # min_serialized_dag_fetch_interval: 10
+    # max_num_rendered_ti_fields_per_task: 30
+
   # Authentication backend used for the experimental API
   api:
     auth_backend: airflow.api.auth.backend.deny_all
@@ -1178,11 +1194,14 @@ config:
     statsd_host: '{{ printf "%s-statsd" .Release.Name }}'
   webserver:
     enable_proxy_fix: 'True'
+    expose_config: 'True'
     # For Airflow 1.10
     rbac: 'True'
   celery:
-    worker_concurrency: 16
+    default_queue: celery
+    # worker_concurrency: 16
   scheduler:
+    scheduler_heartbeat_sec: 5
     # statsd params included for Airflow 1.10 backward compatibility; moved to [metrics] in 2.0
     statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
     statsd_port: 9125
@@ -1190,6 +1209,8 @@ config:
     statsd_host: '{{ printf "%s-statsd" .Release.Name }}'
     # `run_duration` included for Airflow 1.10 backward compatibility; removed in 2.0.
     run_duration: 41460
+    catchup_by_default: false
+    schedule_after_task_execution: false
   elasticsearch:
     json_format: 'True'
     log_id_template: "{dag_id}_{task_id}_{execution_date}_{try_number}"
@@ -1211,6 +1232,9 @@ config:
     pod_template_file: '{{ include "airflow_pod_template_file" . }}/pod_template_file.yaml'
     worker_container_repository: '{{ .Values.images.airflow.repository | default .Values.defaultAirflowRepository }}'
     worker_container_tag: '{{ .Values.images.airflow.tag | default .Values.defaultAirflowTag }}'
+    multi_namespace_mode: '{{ if .Values.multiNamespaceMode }}True{{ else }}False{{ end }}'
+
+    delete_worker_pods: 'True'
     multi_namespace_mode: '{{ if .Values.multiNamespaceMode }}True{{ else }}False{{ end }}'
 # yamllint enable rule:line-length
 
@@ -1253,7 +1277,7 @@ dags:
     # If using a custom storageClass, pass name here
     storageClassName:
     # access mode of the persistent volume
-    accessMode: ReadWriteOnce
+    accessMode: ReadWriteMany
     ## the name of an existing PVC to use
     existingClaim:
   gitSync:
@@ -1312,6 +1336,8 @@ dags:
     uid: 65533
     extraVolumeMounts: []
     env: []
+      # - name: GIT_SYNC_GIT_CONFIG
+      #   value: http.proxy:10.40.40.245:3128,https.proxy:10.40.40.245:3128
     resources: {}
     #  limits:
     #   cpu: 100m
@@ -1323,7 +1349,7 @@ dags:
 logs:
   persistence:
     # Enable persistent volume for storing logs
-    enabled: false
+    enabled: true
     # Volume size for logs
     size: 100Gi
     # If using a custom storageClass, pass name here
