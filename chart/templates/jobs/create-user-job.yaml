@@ -78,25 +78,22 @@ spec:
           image: {{ template "airflow_image" . }}
           imagePullPolicy: {{ .Values.images.airflow.pullPolicy }}
           args:
-            - "bash"
-            - "-c"
             {{- if semverCompare ">=2.0.0" .Values.airflowVersion }}
-            - 'airflow users create "$@"'
+            - 'airflow users create'
             {{- else }}
-            - 'airflow create_user "$@"'
+            - 'airflow create_user'
             {{- end }}
-            - --
-            - "-r"
+            - "--role"
             - {{ .Values.webserver.defaultUser.role }}
-            - "-u"
+            - "--username"
             - {{ .Values.webserver.defaultUser.username }}
-            - "-e"
+            - "--email"
             - {{ .Values.webserver.defaultUser.email }}
-            - "-f"
+            - "--firstname"
             - {{ .Values.webserver.defaultUser.firstName }}
-            - "-l"
+            - "--lastname"
             - {{ .Values.webserver.defaultUser.lastName }}
-            - "-p"
+            - "--password"
             - "{{ .Values.webserver.defaultUser.password }}"
           envFrom:
           {{- include "custom_airflow_environment_from" . | default "\n  []" | indent 10 }}

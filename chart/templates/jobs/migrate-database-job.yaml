@@ -78,9 +78,9 @@ spec:
           imagePullPolicy: {{ .Values.images.airflow.pullPolicy }}
           # Support running against 1.10.x and 2.x
           {{- if semverCompare ">=2.0.0" .Values.airflowVersion }}
-          args: ["bash", "-c", "airflow db upgrade"]
+          args: ["airflow db upgrade"]
           {{- else }}
-          args: ["bash", "-c", "airflow upgradedb"]
+          args: ["airflow upgradedb"]
           {{- end }}
           envFrom:
           {{- include "custom_airflow_environment_from" . | default "\n  []" | indent 10 }}

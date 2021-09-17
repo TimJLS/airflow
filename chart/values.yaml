@@ -336,8 +336,6 @@ workers:
   command: ~
   # Args to use when running Airflow workers (templated).
   args:
-    - "bash"
-    - "-c"
     # The format below is necessary to get `helm lint` happy
     - |-
       exec \
@@ -479,12 +477,12 @@ scheduler:
     periodSeconds: 30
   # Airflow 2.0 allows users to run multiple schedulers,
   # However this feature is only recommended for MySQL 8+ and Postgres
-  replicas: 1
+  replicas: 5
 
   # Command to use when running the Airflow scheduler (templated).
   command: ~
   # Args to use when running the Airflow scheduler (templated).
-  args: ["bash", "-c", "exec airflow scheduler"]
+  args: ["airflow scheduler"]
 
   # Update Strategy when scheduler is deployed as a StatefulSet
   # (when using LocalExecutor and workers.persistence)
@@ -622,12 +620,12 @@ webserver:
     periodSeconds: 5
 
   # Number of webservers
-  replicas: 1
+  replicas: 3
 
   # Command to use when running the Airflow webserver (templated).
   command: ~
   # Args to use when running the Airflow webserver (templated).
-  args: ["bash", "-c", "exec airflow webserver"]
+  args: ["airflow webserver"]
 
   # Create ServiceAccount
   serviceAccount:
@@ -717,15 +715,15 @@ webserver:
 
   # Select certain nodes for airflow webserver pods.
   nodeSelector: {}
-  affinity:
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                component: webserver
-            topologyKey: "kubernetes.io/hostname"
+  # affinity:
+  #   podAntiAffinity:
+  #     preferredDuringSchedulingIgnoredDuringExecution:
+  #       - weight: 100
+  #         podAffinityTerm:
+  #           labelSelector:
+  #             matchLabels:
+  #               component: webserver
+  #           topologyKey: "kubernetes.io/hostname"
   tolerations: []
 
 # Airflow Triggerer Config
